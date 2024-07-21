@@ -1,7 +1,5 @@
 extern crate winapi;
 
-use std::default;
-
 const BUTTON_NUM: usize = 16;
 pub const DPAD_UP: usize = 0;
 pub const DPAD_DOWN: usize = 1;
@@ -22,35 +20,17 @@ pub const ACTION_Y: usize = 15;
 #[derive(Debug, Default)]
 pub struct ControllerState {
     is_connected: bool,
-    buttons: [ButtonState; BUTTON_NUM],
-    /*    dpad_up: ButtonState,
-    dpad_down: ButtonState,
-    dpad_left: ButtonState,
-    dpad_right: ButtonState,
-    menu: ButtonState,
-    select: ButtonState,
-    left_stick: ButtonState,
-    right_stick: ButtonState,
-    left_bumper: ButtonState,
-    right_bumper: ButtonState,
-    action_a: ButtonState,
-    action_b: ButtonState,
-    action_x: ButtonState,
-    action_y: ButtonState,*/
+    pub buttons: [ButtonState; BUTTON_NUM],
 }
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub enum ButtonState {
+    #[default]
     Original,
     Pressed,
     /// Pressed + Released = clicked
     Clicked,
-}
-impl Default for ButtonState {
-    fn default() -> Self {
-        ButtonState::Original
-    }
 }
 impl ButtonState {
     pub fn from_u8(v: u8) -> Self {
@@ -66,9 +46,8 @@ impl ControllerState {
         Self::default()
     }
     pub fn set_with_index(&mut self, idx: usize, state: ButtonState) {
-        match idx {
-            0..=15 => self.buttons[idx] = state,
-            _ => {}
-        };
+        if let 0..=15 = idx {
+            self.buttons[idx] = state
+        }
     }
 }
