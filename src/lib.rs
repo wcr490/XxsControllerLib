@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    io::{stdout, Stdout, Write},
+    io::{Stdout, Write},
     sync::{Arc, Mutex},
 };
 

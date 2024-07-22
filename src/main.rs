@@ -1,6 +1,4 @@
 use std::io::stdout;
-use std::io::Stdout;
-use std::mem::zeroed;
 use std::sync::Arc;
 use std::sync::Mutex;
 use std::thread;
@@ -28,13 +26,13 @@ pub fn main() -> Result<(), std::io::Error> {
         let _con = Arc::clone(&_con);
         {
             let mut stdout = stdout.lock().unwrap();
-            execute!(stdout, Clear(ClearType::All));
+            execute!(stdout, Clear(ClearType::All))?;
         }
         thread::spawn(move || loop {
             {
                 let con = _con.lock().unwrap();
                 let stdout = Arc::clone(&stdout);
-                con.buttons_display_mt(stdout, 0, 10);
+                let _ = con.buttons_display_mt(stdout, 0, 10);
             }
             thread::sleep(Duration::from_millis(50));
         })
