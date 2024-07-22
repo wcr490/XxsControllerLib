@@ -1,6 +1,7 @@
 [package]
 name = "xci"
 authors = ["Rice <3066814296@qq.com>"]
+description = "A 'Noob and Easy-peasy' library about some interfaces of xss controller(XInput)"
 license = "MIT OR Apache-2.0"
 version = "0.1.0"
 edition = "2021"
