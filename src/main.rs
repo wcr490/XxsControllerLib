@@ -44,11 +44,13 @@ pub fn main() -> Result<(), std::io::Error> {
         let _clone_con = Arc::clone(&_clone_con);
         thread::spawn(move || unsafe {
             let mut _state: XINPUT_STATE = std::mem::zeroed();
+            let mut count = 0;
             loop {
                 let mut con = _clone_con.lock().unwrap();
                 _state = con.refresh(_state);
                 if con.buttons[0] == ButtonState::Clicked {
-                    println!("OK");
+                    count += 1;
+                    println!("{}", count);
                 }
             }
         })
