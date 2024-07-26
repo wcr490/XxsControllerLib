@@ -4,6 +4,7 @@ use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 
+use crossterm::cursor::MoveTo;
 use crossterm::execute;
 use crossterm::terminal::Clear;
 use crossterm::terminal::ClearType;
@@ -16,7 +17,7 @@ use xci::state::ButtonState;
 use xci::xinput;
 
 pub fn main() -> Result<(), std::io::Error> {
-    let controller = state::ControllerState::new();
+    let mut controller = state::ControllerState::new();
     let _con = Arc::new(Mutex::new(controller));
     let _clone_con = Arc::clone(&_con);
     let stdout = Arc::new(Mutex::new(stdout()));
@@ -32,9 +33,9 @@ pub fn main() -> Result<(), std::io::Error> {
             {
                 let con = _con.lock().unwrap();
                 let stdout = Arc::clone(&stdout);
-                let _ = con.buttons_display_mt(stdout, 0, 10);
+                let _ = con.buttons_display_mt(stdout, 0, 0);
             }
-            thread::sleep(Duration::from_millis(50));
+            thread::sleep(Duration::from_millis(30));
         })
     };
 
@@ -42,18 +43,27 @@ pub fn main() -> Result<(), std::io::Error> {
         let _clone_con = Arc::clone(&_clone_con);
         thread::spawn(move || unsafe {
             let mut _state: XINPUT_STATE = std::mem::zeroed();
-            let mut count = 0;
             loop {
                 let mut con = _clone_con.lock().unwrap();
                 _state = con.refresh(_state);
-                if con.buttons[0] == ButtonState::Clicked {
-                    count += 1;
-                    println!("{}", count);
-                }
             }
         })
     };
     display_thread.join().unwrap();
     update_thread.join().unwrap();
+    /*
+    unsafe {
+        let mut stdout = stdout();
+        let mut _state: XINPUT_STATE = std::mem::zeroed();
+        let _ = execute!(stdout, Clear(ClearType::All));
+        loop {
+            _state = controller.refresh(_state);
+            let _ = execute!(stdout, MoveTo(0, 10));
+            println!("{:<20}", controller.trigger[0]);
+            println!("{:<20}", controller.trigger[1]);
+        }
+    }
+    */
+
     Ok(())
 }

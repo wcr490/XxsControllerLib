@@ -17,8 +17,10 @@ impl state::ControllerState {
     /// last should be valid
     pub unsafe fn refresh(&mut self, last: XINPUT_STATE) -> XINPUT_STATE {
         let cur = xinput::refresh();
-        let last_buttons = last.Gamepad.wButtons;
-        let cur_buttons = cur.Gamepad.wButtons;
+        let pad = cur.Gamepad;
+        /* Button */
+        let last_buttons = pad.wButtons;
+        let cur_buttons = pad.wButtons;
         let clicked = (last_buttons ^ cur_buttons) & last_buttons;
         for i in 0..16 {
             if (clicked & (1 << i)) != 0 {
@@ -30,6 +32,30 @@ impl state::ControllerState {
                 continue;
             }
             self.buttons[i] = ButtonState::Original;
+        }
+        /* Trigger */
+        self.triggers[state::LEFT] = (f64::from(pad.bLeftTrigger) / 2.55) as u8;
+        self.triggers[state::RIGHT] = (f64::from(pad.bRightTrigger) / 2.55) as u8;
+        /* Thumb */
+        if pad.sThumbLX > 0 {
+            self.thumbs[state::LEFT_X] = (f64::from(pad.sThumbLX) / 327.67) as i8;
+        } else {
+            self.thumbs[state::LEFT_X] = (f64::from(pad.sThumbLX) / 327.68) as i8;
+        }
+        if pad.sThumbLY > 0 {
+            self.thumbs[state::LEFT_Y] = (f64::from(pad.sThumbLY) / 327.67) as i8;
+        } else {
+            self.thumbs[state::LEFT_Y] = (f64::from(pad.sThumbLY) / 327.68) as i8;
+        }
+        if pad.sThumbRX > 0 {
+            self.thumbs[state::RIGHT_X] = (f64::from(pad.sThumbRX) / 327.67) as i8;
+        } else {
+            self.thumbs[state::RIGHT_X] = (f64::from(pad.sThumbRX) / 327.68) as i8;
+        }
+        if pad.sThumbRY > 0 {
+            self.thumbs[state::RIGHT_Y] = (f64::from(pad.sThumbRY) / 327.67) as i8;
+        } else {
+            self.thumbs[state::RIGHT_Y] = (f64::from(pad.sThumbRY) / 327.68) as i8;
         }
         cur
     }
@@ -77,11 +103,12 @@ impl Display for ButtonState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}",
+            "{:>50}",
             match self {
-                ButtonState::Clicked => "C",
-                ButtonState::Original => "O",
-                ButtonState::Pressed => "P",
+                // Actually useless
+                ButtonState::Clicked => "Clicked",
+                ButtonState::Original => "Original",
+                ButtonState::Pressed => "Pressed",
             }
         )
     }
@@ -89,8 +116,13 @@ impl Display for ButtonState {
 impl Display for ControllerState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for (i, state) in self.buttons.iter().enumerate() {
-            writeln!(f, "{} is {}", i, state)?;
+            writeln!(f, "{} : {}", i, state)?;
         }
+        writeln!(f, "")?;
+        writeln!(f, "Left Trigger  : {:>30}%", self.triggers[0])?;
+        writeln!(f, "Right Trigger : {:>30}%", self.triggers[1])?;
+        writeln!(f, "Left Thumb X :  {:>10}%   Left Thumb Y : {:>10}% ", self.thumbs[0], self.thumbs[1])?;
+        writeln!(f, "Right Thumb X : {:>10}%  Right Thumb Y : {:>10}% ", self.thumbs[2], self.thumbs[3])?;
         Ok(())
     }
 }

@@ -16,11 +16,21 @@ pub const ACTION_B: usize = 13;
 pub const ACTION_X: usize = 14;
 pub const ACTION_Y: usize = 15;
 
+pub const LEFT: usize = 0;
+pub const RIGHT: usize = 1;
+
+pub const LEFT_X: usize = 0;
+pub const LEFT_Y: usize = 1;
+pub const RIGHT_X: usize = 2;
+pub const RIGHT_Y: usize = 3;
+
 #[allow(dead_code)]
 #[derive(Debug, Default)]
 pub struct ControllerState {
     is_connected: bool,
     pub buttons: [ButtonState; BUTTON_NUM],
+    pub triggers: [u8; 2],
+    pub thumbs: [i8; 4],
 }
 
 #[allow(dead_code)]
