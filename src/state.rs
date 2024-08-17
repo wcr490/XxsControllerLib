@@ -27,7 +27,7 @@ pub const RIGHT_Y: usize = 3;
 #[allow(dead_code)]
 #[derive(Debug, Default)]
 pub struct ControllerState {
-    is_connected: bool,
+    pub is_connected: bool,
     pub buttons: [ButtonState; BUTTON_NUM],
     pub triggers: [u8; 2],
     pub thumbs: [i8; 4],

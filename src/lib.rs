@@ -17,6 +17,7 @@ impl state::ControllerState {
     /// last should be valid
     pub unsafe fn refresh(&mut self, last: XINPUT_STATE) -> XINPUT_STATE {
         let cur = xinput::refresh();
+        self.is_connected = cur.dwPacketNumber != 0;
         let pad = cur.Gamepad;
         /* Button */
         let last_buttons = pad.wButtons;
@@ -118,7 +119,6 @@ impl Display for ControllerState {
         for (i, state) in self.buttons.iter().enumerate() {
             writeln!(f, "{} : {}", i, state)?;
         }
-        writeln!(f, "")?;
         writeln!(f, "Left Trigger  : {:>30}%", self.triggers[0])?;
         writeln!(f, "Right Trigger : {:>30}%", self.triggers[1])?;
         writeln!(f, "Left Thumb X :  {:>10}%   Left Thumb Y : {:>10}% ", self.thumbs[0], self.thumbs[1])?;
