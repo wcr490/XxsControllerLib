@@ -3,7 +3,7 @@ name = "xci"
 authors = ["Rice <3066814296@qq.com>"]
 description = "A 'Noob and Easy-peasy' library about some interfaces of xss controller(XInput)"
 license = "MIT OR Apache-2.0"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
